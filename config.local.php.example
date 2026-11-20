@@ -1,0 +1,22 @@
+<?php
+// Sao chép file này thành config.local.php rồi sửa. File config.local.php KHÔNG nằm trong bản zip,
+// nên khi chép đè bản web mới các cài đặt dưới đây sẽ không bị mất. Chỉ cần khai báo những mục bạn muốn đổi.
+
+// define('DB_HOST','localhost'); define('DB_NAME','doan2'); define('DB_USER','root'); define('DB_PASS','');
+// define('SHOP_PHONE','0900 000 000'); define('SHOP_EMAIL','lienhe@ten-mien.vn'); define('SHOP_HOURS','8:00 – 21:00 mỗi ngày');
+
+// Mã khôi phục (tối thiểu 12 ký tự) dùng ở forgot.php khi chưa cấu hình Gmail:
+// define('RECOVERY_KEY','doi-thanh-chuoi-bi-mat-cua-ban');
+
+// Gmail dùng để GỬI mã OTP khôi phục mật khẩu. SMTP_PASS là "Mật khẩu ứng dụng" 16 ký tự của Google (không phải mật khẩu Gmail):
+// define('SMTP_USER','gmailcuaban@gmail.com'); define('SMTP_PASS','abcd efgh ijkl mnop');
+// define('SMTP_VERIFY_SSL',true);   // đổi thành false nếu báo lỗi chứng chỉ SSL trên localhost
+
+// Đăng nhập bằng Google (lấy trong Google Cloud > APIs & Services > Credentials > OAuth client ID, loại Web application):
+// define('GOOGLE_CLIENT_ID','xxxxxxxx.apps.googleusercontent.com'); define('GOOGLE_CLIENT_SECRET','GOCSPX-xxxxxxxx');
+// define('GOOGLE_REDIRECT_URI','http://localhost/doan2/google_callback.php');   // thường không cần: web tự suy ra
+// define('GOOGLE_VERIFY_SSL',true);   // đổi thành false nếu báo lỗi chứng chỉ SSL (cURL error 60) trên localhost
+
+// Thông tin nhận tiền mặc định cho thanh toán chuyển khoản (cũng sửa được ở Quản trị > Thanh toán):
+// define('PAY_BANK_NAME','MB Bank'); define('PAY_BANK_BIN','970422'); define('PAY_BANK_ACC','0989891671'); define('PAY_BANK_OWNER','TRUONG HOANG QUY');
+// define('PAY_QR_DEFAULT','images/qr_mb.png');   // ảnh mã QR mặc định; thay bằng ảnh khác trong thư mục images/ nếu muốn

@@ -1,0 +1,9 @@
+# Không cho truy cập trực tiếp các file SQL (chứa dữ liệu thật) qua trình duyệt
+Options -Indexes
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Order allow,deny
+  Deny from all
+</IfModule>

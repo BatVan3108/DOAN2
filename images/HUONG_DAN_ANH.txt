@@ -1,0 +1,3 @@
+Ảnh sản phẩm: đặt tên theo mã sản phẩm (1.jpg, 2.jpg ... cũng nhận png, webp), hoặc tải trực tiếp trong Quản trị > Sản phẩm > Sửa.
+Không có ảnh thì web tự hiện hình minh họa. Gợi ý: nền trắng, rộng ~800px.
+Logo hãng nằm trong images/brands/ (tên hãng viết thường: asus.png, lg.png...).

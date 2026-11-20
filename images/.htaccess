@@ -1,0 +1,5 @@
+# Chặn chạy mã PHP trong thư mục ảnh (an toàn khi cho phép tải ảnh lên)
+Options -Indexes
+<FilesMatch "\.(php|phtml|phar|php[0-9])$">
+  Require all denied
+</FilesMatch>

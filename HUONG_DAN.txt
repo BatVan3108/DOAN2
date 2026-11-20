@@ -1,0 +1,74 @@
+HƯỚNG DẪN CÀI ĐẶT (XAMPP / WAMP, PHP 7.4+)
+1. Chép thư mục doan2 vào htdocs (XAMPP) hoặc www (WAMP).
+2. Mở phpMyAdmin > Import > chọn database.sql (tự tạo CSDL "doan2" và dữ liệu mẫu).
+   Nếu đã có CSDL doan2 từ bản cũ, KHÔNG cần import lại: bản này dùng đúng cấu trúc bảng cũ.
+3. Nếu MySQL có mật khẩu, sửa DB_USER / DB_PASS trong config.php.
+   Cũng trong config.php: sửa SHOP_PHONE, SHOP_EMAIL, SHOP_HOURS cho đúng cửa hàng.
+4. Mở http://localhost/doan2/setup.php để tạo tài khoản admin (hiện mật khẩu 1 lần), rồi XÓA setup.php.
+5. Truy cập http://localhost/doan2/ . Đăng nhập tại login.php.
+
+KHU QUẢN TRỊ (sau khi đăng nhập): Đơn hàng | Sản phẩm (thêm/sửa/xóa, tải ảnh) | Thông báo & khuyến mãi (thêm/sửa/xóa) | Bảng giá (tải lên).
+- Thông báo & khuyến mãi hiển thị ở trang chủ; 3 khuyến mãi mới nhất chạy trên banner trượt.
+- Ảnh sản phẩm: tải ngay trong trang sửa sản phẩm, hoặc chép images/<mã>.jpg. Logo hãng: images/brands/<tên hãng viết thường>.png.
+- Thư mục uploads/ và images/ cần cho phép ghi (Linux: chmod 775). Hai thư mục đã có sẵn .htaccess chặn chạy PHP.
+
+QUÊN MẬT KHẨU: vào login.php > "Quên mật khẩu?" (forgot.php), nhập tên đăng nhập + mã khôi phục (hằng RECOVERY_KEY trong config.php) + mật khẩu mới.
+- Hãy đổi RECOVERY_KEY thành chuỗi bí mật của riêng bạn và đừng chia sẻ. Sai quá 5 lần sẽ bị khóa 3 phút.
+- reset.php đã được gộp vào forgot.php (khung "Khôi phục tại máy", chỉ hiện khi mở từ localhost, tự đặt mật khẩu mới, không còn đặt cứng admin123).
+
+GỬI MÃ KHÔI PHỤC QUA GMAIL (forgot.php + admin_account.php)
+1) Dùng 1 Gmail để GỬI thư: bật Xác minh 2 bước tại myaccount.google.com/security, rồi tạo "Mật khẩu ứng dụng" tại myaccount.google.com/apppasswords (16 ký tự).
+2) Mở config.php, điền: const SMTP_USER='gmailcuaban@gmail.com', SMTP_PASS='mat khau ung dung 16 ky tu';
+   Nếu báo lỗi chứng chỉ SSL trên localhost: đặt SMTP_VERIFY_SSL=false (chỉ dùng trên máy cá nhân).
+3) Đăng nhập admin > "Tài khoản & Gmail" > nhập Gmail NHẬN mã > nhập mã 6 số để xác nhận liên kết.
+4) Khi quên mật khẩu: forgot.php > nhập Tên đăng nhập + Gmail khôi phục > bấm "Gửi mã" > nhập mã OTP 6 số + mật khẩu mới. Mã dùng 1 lần, hiệu lực 10 phút.
+- Nếu chưa cấu hình SMTP hoặc tài khoản chưa liên kết Gmail, forgot.php dùng RECOVERY_KEY trong config.php như trước.
+- Cột email/reset_hash/reset_exp của bảng users được tự thêm, không cần import lại database.sql.
+
+TÀI KHOẢN KHÁCH HÀNG (register.php): khách có thể đăng ký bằng email hoặc số điện thoại, đăng nhập tại login.php (cùng trang với quản trị).
+- Khách lưu trong bảng customers (tự tạo, tách riêng bảng users của quản trị). Thông tin họ tên/SĐT/email được điền sẵn ở trang Đăng ký mua.
+- Quên mật khẩu (forgot.php): nhập email hoặc tên đăng nhập > Gửi mã > nhập OTP + mật khẩu mới. Khách đăng ký chỉ bằng số điện thoại không nhận được OTP (chưa có SMS).
+
+GIỎ HÀNG VÀ ĐẶT HÀNG (thay cho trang Đăng ký mua cũ)
+- Mỗi sản phẩm có nút giỏ hàng; bấm vào thì số trên biểu tượng giỏ ở header nhảy lên và ngăn kéo "Giỏ hàng của bạn" trượt ra (đổi số lượng, xóa, "Xem giỏ hàng").
+- cart.php: chọn sản phẩm, đổi số lượng, xem chi tiết thanh toán. Bấm "Tiếp theo": chưa đăng nhập thì hiện hộp đăng nhập (giỏ hàng vẫn giữ).
+- checkout.php: bước 2 nhập thông tin giao hàng, bước 3 xác nhận rồi "Đặt mua hàng". order_done.php hiện mã đơn DHxxxx.
+- Giỏ hàng lưu theo phiên làm việc (đóng trình duyệt là mất). Đơn lưu ở bảng orders + order_items (tự tạo/tự thêm cột, không cần import lại SQL). Trang quản trị hiển thị đủ các sản phẩm của đơn.
+- order.php chỉ còn chuyển hướng sang giỏ hàng (order.php?id=<mã> sẽ thêm sản phẩm vào giỏ).
+
+GIỮ MẬT KHẨU VÀ CÀI ĐẶT KHI CẬP NHẬT / RESET WEB
+- Tài khoản (admin + khách hàng) nằm ở CSDL RIÊNG "doan2_accounts" (web tự tạo, tài khoản cũ trong doan2 tự được chuyển sang). Xóa hoặc import lại CSDL "doan2" KHÔNG làm mất mật khẩu. Đừng xóa CSDL doan2_accounts.
+- Cài đặt riêng (MySQL, Gmail gửi mã, RECOVERY_KEY, thông tin cửa hàng) đặt trong config.local.php (sao chép từ config.local.php.example). Chép đè bản web mới sẽ không làm mất file này.
+- database.sql không còn chứa bảng tài khoản.
+
+TRANG THÔNG BÁO VÀ KHUYẾN MÃI (đã tách riêng)
+- khuyenmai.php: tìm kiếm, lọc theo danh mục / loại ưu đãi, sắp xếp. thongbao.php: các tab theo danh mục, mục "Nổi Bật Nhất".
+- Quản lý ở Quản trị > Thông báo & khuyến mãi (thêm: danh mục, loại ưu đãi, áp dụng cho, ảnh bìa) hoặc bấm Sửa / Xóa ngay trên trang khi đăng nhập admin.
+
+ĐĂNG NHẬP BẰNG GOOGLE (google_login.php, google_callback.php)
+1) Vào console.cloud.google.com > tạo Project mới.
+2) APIs & Services > OAuth consent screen: chọn External, điền tên ứng dụng + email hỗ trợ. Khi ở chế độ "Testing", chỉ các Gmail thêm vào mục "Test users" mới đăng nhập được; bấm "Publish app" để cho mọi người dùng (chỉ xin quyền cơ bản openid/email/profile nên không cần Google duyệt).
+3) APIs & Services > Credentials > Create credentials > OAuth client ID > Web application. Mục "Authorized redirect URIs" thêm đúng: http://localhost/doan2/google_callback.php (đổi theo địa chỉ web thật khi đưa lên mạng, phải trùng từng ký tự).
+4) Copy Client ID và Client secret vào config.local.php (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET), xem mẫu trong config.local.php.example.
+- Khách đăng nhập Google lần đầu sẽ tự có tài khoản (bảng customers, cột google_sub). Email đã có tài khoản khách thì được liên kết vào tài khoản đó. Email thuộc tài khoản quản trị bị từ chối (admin chỉ đăng nhập bằng tên đăng nhập + mật khẩu).
+- Lỗi "cURL error 60 / SSL certificate" trên XAMPP: đặt GOOGLE_VERIFY_SSL=false trong config.local.php (chỉ dùng trên máy cá nhân).
+
+TỒN KHO, ĐƠN HÀNG, THANH TOÁN QR (tự cập nhật CSDL, không cần import lại SQL)
+- Mỗi sản phẩm có "Số lượng tồn kho" (Quản trị > Sản phẩm > Sửa). Sản phẩm cũ được gán mặc định 20, hãy cập nhật lại cho đúng thực tế.
+- Khách thấy "Còn hàng" / "Chỉ còn N sản phẩm" (<=5) / "Hết hàng" (khóa nút mua). Giỏ hàng và lúc đặt đơn đều bị chặn theo tồn kho.
+- COD: trừ kho ngay khi đặt đơn. Chuyển khoản: đơn ở trạng thái "Chờ xác nhận thanh toán", kho chỉ bị trừ khi admin bấm "Đã nhận tiền" (Quản trị > Đơn hàng). Hủy đơn đã trừ kho thì kho được hoàn lại.
+- Quản trị > Thanh toán: nhập ngân hàng, số tài khoản, chủ tài khoản và TẢI ẢNH QR CỦA BẠN LÊN. Ảnh QR hiện ở trang đặt hàng thành công và trang chi tiết đơn (chuyển khoản). Không có ảnh thì web tự tạo VietQR theo từng đơn nếu đã nhập mã ngân hàng + số tài khoản.
+- Khách xem lịch sử đơn tại "Đơn hàng" trên header (my_orders.php, my_order.php); đơn chuyển khoản chưa thanh toán có thể tự hủy.
+
+MÃ QR THANH TOÁN MẶC ĐỊNH
+- Website đi kèm sẵn ảnh mã QR MB Bank (images/qr_mb.png) và thông tin nhận tiền mặc định (MB Bank, TRUONG HOANG QUY, 0989891671). Khách chọn chuyển khoản sẽ thấy mã này ở trang đặt hàng thành công và chi tiết đơn.
+- Quản trị > Thanh toán: tải ảnh QR khác lên để thay thế, sửa thông tin ngân hàng, hoặc bật mã VietQR tự động theo từng đơn (quét thử một lần để chắc chắn đúng tên chủ tài khoản trước khi bật).
+
+TỰ ĐỘNG NHẬP CƠ SỞ DỮ LIỆU
+- Thư mục sql/ chứa doan2.sql (sản phẩm, đơn hàng, thông báo...) và doan2_accounts.sql (tài khoản quản trị + khách hàng). Chỉ cần bật Apache + MySQL rồi mở web: lần đầu web tự tạo CSDL doan2 và doan2_accounts và nhập hai file này, KHÔNG cần import thủ công trong phpMyAdmin.
+- Web chỉ nhập khi CSDL hoặc bảng cốt lõi (products, users) chưa có; dữ liệu đang có không bao giờ bị ghi đè. Muốn nạp lại từ file SQL: xóa CSDL tương ứng trong phpMyAdmin rồi mở lại web.
+- Hai file SQL chứa dữ liệu thật (email khách, mã băm mật khẩu, mã Google). Đừng đăng công khai file zip này; thư mục sql/ đã được chặn truy cập trực tiếp qua trình duyệt.
+
+THỐNG KÊ DOANH THU (Quản trị > Thống kê, admin_stats.php)
+- Chọn xem theo Tháng, Quý hoặc Năm; chọn năm (và tháng cụ thể để xem theo ngày). Có biểu đồ cột, bảng chi tiết kèm tỷ trọng, sản phẩm bán chạy, cơ cấu trạng thái đơn và hình thức thanh toán, nút Xuất CSV mở được bằng Excel.
+- Doanh thu chỉ tính đơn Đã tiếp nhận + Hoàn tất (hoặc chọn "Chỉ đơn hoàn tất"); đơn chờ thanh toán và đơn đã hủy không tính. Ngày tính theo ngày đặt đơn.

@@ -1,0 +1,16 @@
+<?php require_once __DIR__.'/config.php'; $h_cur=basename($_SERVER['SCRIPT_NAME']);
+$h_cats=$pdo->query('SELECT * FROM categories ORDER BY id')->fetchAll();
+$h_cb=[]; foreach($pdo->query('SELECT DISTINCT p.category_id AS cid, b.id AS bid, b.name FROM products p JOIN brands b ON b.id=p.brand_id ORDER BY b.name') as $h_r) $h_cb[$h_r['cid']][]=$h_r; ?>
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="csrf" content="<?= csrf() ?>">
+<title><?= !empty($title)?e($title).' - '.e(SHOP_NAME):e(SHOP_NAME) ?></title><link rel="stylesheet" href="style.css?v=<?= (int)@filemtime(__DIR__.'/style.css') ?>"></head><body<?= !empty($bare)?' class="authbody"':'' ?>>
+<?php if(!empty($bare)) return; ?>
+<header><div class="bar"><?= shop_logo() ?>
+<form class="search" action="products.php" method="get"><?= ico('search') ?><input type="search" name="q" placeholder="Tìm kiếm sản phẩm, danh mục..." value="<?= e(gs('q')) ?>" aria-label="Tìm sản phẩm"><button type="submit" aria-label="Tìm"><?= ico('search') ?></button></form>
+<div class="hacts"><?php if(is_admin()): ?><a class="hact" href="admin.php"><?= ico('user') ?><span>Quản trị<br>viên</span></a><a class="hact" href="logout.php"><span>Đăng<br>xuất</span></a><?php elseif($h_cu=cur_customer($pdo)): ?><span class="hact"><?= ico('user') ?><span>Xin chào<br><b><?= e(mb_strimwidth($h_cu['full_name'],0,14,'…','UTF-8')) ?></b></span></span><a class="hact" href="my_orders.php"><span>Đơn<br>hàng</span></a><a class="hact" href="logout.php"><span>Đăng<br>xuất</span></a><?php else: ?><a class="hact" href="login.php"><?= ico('user') ?><span>Đăng nhập<br>Đăng ký</span></a><?php endif; ?>
+<a class="hact cartbtn" id="cartbtn" href="cart.php" aria-label="Giỏ hàng"><?= ico('cart') ?><b class="badge <?= cart_count()<1?'zero':'' ?>" id="cartcount"><?= cart_count() ?></b><span>Giỏ<br>hàng</span></a></div></div>
+<div class="navwrap"><div class="nv"><div class="catbox" id="catbox"><button type="button" class="cat-btn" onclick="this.parentNode.classList.toggle('open')"><?= ico('menu') ?> Danh mục sản phẩm <span class="chev">⌄</span></button>
+<div class="mega"><ul><?php foreach($h_cats as $h_c): ?><li><a href="products.php?cat=<?= (int)$h_c['id'] ?>"><?= e($h_c['name']) ?><span>›</span></a>
+<div class="sub"><div><h5>Hãng</h5><?php foreach($h_cb[$h_c['id']]??[] as $h_b): ?><a href="products.php?cat=<?= (int)$h_c['id'] ?>&amp;brand=<?= (int)$h_b['bid'] ?>"><?= e($h_b['name']) ?></a><?php endforeach; ?></div>
+<div><h5>Mức giá</h5><?php foreach(PRICE_RANGES as $h_i=>$h_pr): ?><a href="products.php?cat=<?= (int)$h_c['id'] ?>&amp;price=<?= $h_i ?>"><?= e($h_pr[0]) ?></a><?php endforeach; ?></div></div></li><?php endforeach; ?></ul></div></div>
+<?php foreach(['products.php'=>'Sản phẩm','khuyenmai.php'=>'Khuyến mãi','thongbao.php'=>'Thông báo','prices.php'=>'Bảng giá'] as $h_f=>$h_t): ?><a class="nl <?= $h_cur===$h_f?'on':'' ?>" href="<?= $h_f ?>"><?= $h_t ?></a><?php endforeach; ?>
+<span class="sp"></span><div class="hot"><?= ico('head') ?><span>Hotline: <b><?= e(SHOP_PHONE) ?></b><small>Mở cửa <?= e(SHOP_HOURS) ?></small></span></div></div></div></header><main>
